@@ -1,0 +1,27 @@
+---
+# This is required because the rpm does not come from a repository, so ansible will always install a newer version
+- name: Upgrade flag check
+  set_fact:
+    morpheus_package_state: latest
+  when: morpheus_upgrade_flag
+
+- name: Gather package facts
+  package_facts:
+    manager: auto
+
+- block:
+  - name: Morpheus UI | Install Morpheus
+    yum:
+        name: "{{ morpheus_package_centos }}"
+        disable_gpg_check: "{{ morpheus_disable_rpm_gpg_check }}"
+        state: present
+
+  - name: Morpheus UI | Install Morpheus Offline
+    yum:
+        name: "{{ morpheus_offline_package_centos }}"
+        disable_gpg_check: "{{ morpheus_disable_rpm_gpg_check }}"
+        state: present
+    when: morpheus_use_offline_package
+
+  when: ('morpheus-appliance' not in ansible_facts.packages) or
+        (morpheus_upgrade_flag)

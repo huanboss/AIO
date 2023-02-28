@@ -1,0 +1,11 @@
+---
+- hosts: morpheus
+  gather_facts: true
+  become: true
+  become_user: root
+  become_method: sudo
+  ansible_become_pass: your_sudo_password
+  vars:
+    morpheus_appliance_url: "https://{{ play_hosts[0] }}"
+  roles:
+    - morpheus
